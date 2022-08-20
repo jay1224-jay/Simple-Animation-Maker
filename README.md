@@ -1,0 +1,1 @@
+# SAM - Simple Animation Maker
