@@ -10,11 +10,14 @@
 typedef sf::RectangleShape rect;
 
 #include "button.hpp"
+#include "common.h"
 
 #define print(x) std::cout << x << std::endl;
 
 
 int mouse_x, mouse_y;
+bool record_flag = false;
+
 std::ofstream ps_file("great.ps");
 
 void write_ps_file(void);
@@ -36,8 +39,8 @@ int main() {
 
 
 
-    bool record_flag = false;
-    bool end_record_flag = false;
+    
+    std::thread record_thread;
 
     
     while ( window.isOpen() ) {
@@ -51,37 +54,26 @@ int main() {
             else if ( event.type == sf::Event::MouseButtonPressed ) {
                 if ( event.mouseButton.button == sf::Mouse::Left ) {
 
-                    if ( start_btn.isClick( event.mouseButton ) ) {
+                    if ( start_btn.isClick( event.mouseButton ) && !record_flag) {
 
                         record_flag = true;
-
-                        print("front thread");
-                        
-                        std::thread record_thread(write_ps_file);
-
-                        print("behind thread");
+                        record_thread = std::thread(write_ps_file);
 
 
                     } else if ( end_btn.isClick( event.mouseButton ) ) {
 
-                        end_record_flag = true;
+                        record_flag = false;
                     }
-                    print("out thread");
                 }
             }
 
         }
 
 
-        if (record_flag) {
+        if (!record_flag) {
 
-            if ( end_record_flag ) {
-                record_flag = false;
-                end_record_flag = false;
-            } else {
-                ;
+            record_flag = false;
 
-            }
 
         }
 
@@ -99,10 +91,3 @@ int main() {
     }
 }
 
-void write_ps_file(void) {
-
-    ps_file << mouse_x << " " << mouse_y;
-    std::cout << mouse_x << " " << mouse_y;
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-
-}

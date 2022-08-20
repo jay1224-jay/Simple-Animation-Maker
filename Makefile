@@ -16,11 +16,14 @@ INCLUDE_DIR = # your SFML include dir
 # example: "g++ -c main.cpp ... -I$(INCLUDE_DIR)"
 # 
 
-main: main.o
+main: main.o ps.o
 	g++ main.o ps.o -o main $(LIB) 
 
-main.o: main.cpp ps.cpp button.hpp
-	g++ -c main.cpp ps.cpp
+main.o: main.cpp button.hpp common.h
+	g++ -c main.cpp 
+
+ps.o: ps.cpp common.h
+	g++ -c ps.cpp
 
 clean:
 	rm main.o ps.o main
